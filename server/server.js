@@ -1,47 +1,27 @@
-var mongoose = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+var {mongoose} = require('./db/mongoose');
+var {Todo} = require('./models/todo');
+var {User} = require('./models/user');
 
-var Todo = mongoose.model('Todo', {
-    text: {
-        type: String
-    },
-    completed: {
-        type: Boolean
+var app = express();
 
-    },
-    completedAt: {
-        type: Number
+app.use(bodyParser.json());
+app.post('/todos', (req, res) => {
+    var todo = new Todo({
+        text: req.body.text
+    });
 
-    }
-});
-
-var newTodo = new Todo({
-    text: 'Cook Dinner'
-});
-
-var newTodo2 = new Todo({
-    text: 'Eat Dinner',
-    completed: true,
-    completedAt: 25
-});
-
-newTodo.save().then((doc) => {
-    console.log('Saved Doc', doc);
-
-}, (e) => {
-    console.log('unable to connect', e)
-
+    todo.save().then((doc) => {
+        res.send(doc);
+    }, (e) => {
+        res.status(400).send(e);
+    });
 });
 
 
-newTodo2.save().then((doc) => {
-    console.log('Saved Doc', doc);
-
-}, (e) => {
-    console.log('unable to connect', e)
+app.listen(3000, () => {
+    console.log('Listening on port 3000');
 
 });
-
-// newTodo2.save(); //this is valid but you get no response in the consoleg
