@@ -10,7 +10,9 @@ const todos = [{
     text: 'first test todo'
 }, {
     _id: new ObjectID(),
-    text: 'Second test todo'
+    text: 'Second test todo',
+    completed: 'true',
+    completedAt: 333
 }];
 
 
@@ -144,4 +146,49 @@ describe('DELETE /todos/:id', () => {
             .expect(404)
             .end(done);
     });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should find todo and update complete to true', (done) => {
+
+        var id = todos[0]._id.toHexString();
+        var text = 'new string text';
+
+        request(app)
+            .patch(`/todos/${id}`)
+            .send({
+                text,
+                completed: true
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completedAt).toBeA('number');
+                expect(res.body.todo.completed).toBe(true);
+
+            })
+            .end(done);
+
+    });
+
+    it('should clear completedAt when todo is not completed', (done) => {
+
+        var id = todos[1]._id.toHexString();
+
+        request(app)
+            .patch(`/todos/${id}`)
+            .send({
+                completed: false
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completedAt).toBe(null);
+                expect(res.body.todo.completed).toNotExist();
+
+            })
+            .end(done);
+
+    });
+
+    //could also add later checks for invalid id and id not found similar to delete and find
 });
