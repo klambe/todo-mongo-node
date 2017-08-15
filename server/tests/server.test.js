@@ -43,7 +43,6 @@ describe('POST /todos', () => {
                 }).catch((e) => done(e));
 
             });
-
     });
 
     it('Should not create todo with invalid body data', (done) => {
@@ -63,10 +62,7 @@ describe('POST /todos', () => {
                 }).catch((e) => done(e));
 
             });
-
-
     });
-
 });
 
 describe('GET /todos', () => {
@@ -81,7 +77,6 @@ describe('GET /todos', () => {
             .end(done);
 
     });
-
 });
 
 describe('GET /todos/:id', () => {
@@ -111,6 +106,42 @@ describe('GET /todos/:id', () => {
             .end(done);
 
     });
+});
 
+describe('DELETE /todos/:id', () => {
+    it('Should remove a todo', (done) => {
+        var id = todos[0]._id.toHexString();
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo._id).toBe(id);
+            })
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                //query database try find by id should return toNotExist
+                Todo.findById(id).then((todo) => {
 
+                    expect(todo).toNotExist();
+                    done();
+
+                }).catch((e) => done(e));
+            });
+    });
+
+    it('return a 404 if delete todo is not found', (done) => {
+        request(app)
+            .delete(`/todos/${new ObjectID().toHexString()}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('return a 404 for non object id to delete entered', (done) => {
+        request(app)
+            .delete(`/todos/123`)
+            .expect(404)
+            .end(done);
+    });
 });
