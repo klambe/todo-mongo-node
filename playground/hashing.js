@@ -12,13 +12,12 @@ var password = '123abc'
         console.log('kevin pass:', password);
      });
 });
-console.log(newpass);
 console.log('kevin pass:', password);
 
 var hashedPassword = '$2a$10$9LHqfow4HwvMG.KlGz9eSeJCWdtKFb6LCHKxTBCbhR/ZRAHyeiua2';
 
 bcrypt.compare(password, hashedPassword, (err, res)=>{
-   console.log(res);
+   console.log('result***',res);
 });
 
 //
