@@ -1,11 +1,10 @@
 language: node_js
-sudo: required
 node_js:
-  - "7"
+  - "stable"
 install:
   - npm install
-script:
-  - npm test
+#script:
+#  - npm test
 
 services:
   - mongodb
